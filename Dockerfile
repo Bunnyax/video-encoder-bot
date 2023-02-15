@@ -1,15 +1,19 @@
-FROM python:latest
 
-RUN mkdir /bot && chmod 777 /bot
 
-WORKDIR /bot
+FROM python:3.9.7-slim-buster
 
-ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get upgrade -y
 
-RUN apt -qq update && apt -qq install -y git wget pv jq python3-dev ffmpeg mediainfo
+RUN apt-get install git curl python3-pip ffmpeg -y
 
-COPY . .
+RUN pip3 install -U pip
 
-RUN pip3 install -r requirements.txt
+RUN python3 -m pip install --upgrade pip
 
-CMD ["python3","-m","bot"]
+COPY . /app/
+
+WORKDIR /app/
+
+RUN pip3 install -U -r requirements.txt
+
+CMD python3 -m bot
